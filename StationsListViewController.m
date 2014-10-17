@@ -15,6 +15,9 @@
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (strong,nonatomic) NSArray *bikeStation;
+@property NSString *stationName;
+@property double stationLat;
+@property double stationLong;
 @property CLLocationManager *myLocationManager;
 
 @end
@@ -43,8 +46,17 @@
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
     cell.textLabel.text = [[self.bikeStation objectAtIndex: indexPath.row] valueForKey:@"stAddress1"];
+    self.stationName = [[self.bikeStation objectAtIndex: indexPath.row] valueForKey:@"stAddress1"];
+    self.stationLat = [[[self.bikeStation objectAtIndex: indexPath.row] valueForKey:@"latitude"] doubleValue ];
+    self.stationLong = [[[self.bikeStation objectAtIndex: indexPath.row] valueForKey:@"longitude"] doubleValue ];
+
     cell.detailTextLabel.text = [NSString stringWithFormat: @"Avaialble Bikes: %@", [[self.bikeStation objectAtIndex: indexPath.row] valueForKey:@"availableBikes"]];
     return cell;
+}
+
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    self.stationName = [[self.bikeStation objectAtIndex: indexPath.row] valueForKey:@"stAddress1"];
 }
 
 -(void)loadJSONData{
@@ -70,9 +82,9 @@
     if([segue.identifier isEqualToString:@"ToMapSegue"]){
         UINavigationController * navigationController = segue.destinationViewController;
         MapViewController *myMapViewController = (MapViewController *) navigationController;
-        myMapViewController.name = [self.bikeStation valueForKey:@"stAddress1"];
-        //myMapViewController.latitude = [[self.bikeStation valueForKey:@"latitude"] doubleValue];
-        //myMapViewController.latitude = [[self.bikeStation valueForKey:@"longitude"] doubleValue];
+        myMapViewController.name = self.stationName;
+        myMapViewController.latitude = self.stationLat;
+        myMapViewController.longitude = self.stationLong;
     }
 }
 
